@@ -22,7 +22,7 @@ const int joyYPin = A9;
 //const int pot2Pin = A6;
 //const int footPin = A7;
 const int joyButtonPin = 5;
-
+// create variable for fader and joystick state machine
 int fader1state =0;
 int fader2state =0;
 int fader3state =0;
@@ -43,7 +43,7 @@ int lastButtonState = 0;
 
 
 //------------Interface----------------------
-// uncomment for USB Midi interface
+//  for USB Midi interface
 USBMIDI_Interface midi;
 
 // For midi over serial 5 pin din
@@ -63,7 +63,7 @@ MIDIAddress joyYController = {MIDI_CC::Bank_Select , CHANNEL_1};
 //MIDIAddress footController = {MIDI_CC::Bank_Select , CHANNEL_1};
 
 
-// The filtered value read when joystick is at the 0% position
+// The filtered value read when joystick is at the 0% position, this is calibrated to remove dead zones on joystick
 constexpr analog_t minimumValue = 1200;
 // The filtered value read when joystick is at the 100% position
 constexpr analog_t maximumValue = 16383 - 2000;
@@ -309,7 +309,7 @@ void ChangeAddress() // Change the CC address for a selected fader
         DisplayAddress(newJoyYValue, 6);
       }
       
-      //write values to NVM 
+      //write values to NVM so they are available on restart
       EEPROM.update(1,bankFader1.getSelection());
       EEPROM.update(2,bankFader2.getSelection());
       EEPROM.update(3,bankFader3.getSelection());
@@ -376,9 +376,9 @@ void GetFaderValue()  // get fader values to diplay
 void setup() 
 {
   
-     // Add the mapping function to the joystick X potentiometer
+     // Add the mapping function to the joystick X potentiometer, this is calibrated to remove dead zones on joystick
     joyX.map(mappingFunction);
-    // Add the mapping function to the joystick Y potentiometer
+    // Add the mapping function to the joystick Y potentiometer, this is calibrated to remove dead zones on joystick
     joyY.map(mappingFunction);
 
 //debounce swtich
@@ -401,7 +401,7 @@ void setup()
     bankJoyY.select(EEPROM.read(6));
 
     DisplayAddress(7,1);
-// setup display and put the labels for each controller in collums
+// setup display and put the labels for each controller in columns
   oledDisplay.begin();  
   Control_Surface.begin();
   
